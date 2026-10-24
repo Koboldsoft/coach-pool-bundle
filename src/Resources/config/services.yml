@@ -1,0 +1,11 @@
+parameters:
+  env(HUBSPOT_API_KEY): ''
+
+services:
+  Koboldsoft\CoachPoolBundle\Service\HubSpotClient:
+    arguments: ['@http_client', '%env(HUBSPOT_API_KEY)%']
+  Koboldsoft\CoachPoolBundle\Service\CoachPool:
+    public: true
+    arguments: ['@Koboldsoft\CoachPoolBundle\Service\HubSpotClient', '@database_connection', '@logger']
+  Koboldsoft\CoachPoolBundle\Service\PrivateResponseSubscriber:
+    tags: ['kernel.event_subscriber']

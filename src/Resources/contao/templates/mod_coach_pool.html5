@@ -1,0 +1,109 @@
+<?php $this->extend('block_unsearchable'); ?>
+<?php $this->block('content'); ?>
+<?php
+// HubSpot-Inhalte und Coach-Adressen sind immer Text, niemals ausführbares HTML.
+$escape = static function ($value): string { return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); };
+$labels = [
+    'coachingtyp' => 'Coaching', 'city' => 'Stadt', 'coachingformat' => 'Format',
+    'welche_forderung_mochtest_du_fur_dein_coaching_nutzen' => 'Förderung',
+    'hast_du_schon_einen_avgs_gutschein_oder_brauchst_du_unterstutzung_beim_antrag_' => 'AVGS',
+    'falls_du_noch_keinen_avgs_hast_hattest_du_bereits_kontakt_mit_deinerdeinem_sachbearbeiterin_zum_avgs' => 'Kontakt zur Sachbearbeitung',
+    'gutscheingultigkeit' => 'Gutschein gültig bis', 'zeitraum_fur_start' => 'Gewünschter Start',
+    'bevorzugter_kontaktweg' => 'Bevorzugter Kontaktweg', 'zielgruppe' => 'Zielgruppe', 'branche__kategorie' => 'Branche',
+];
+?>
+<div class="coach-pool-view">
+<?php if (!$this->authorized): ?>
+  <p class="cp-notice"><?= $this->reviewMode ? 'Diese Vergabeansicht steht nur den im Modul ausgewählten Prüferinnen und Prüfern des Teams C-Pro zur Verfügung.' : 'Der Coach-Pool steht angemeldeten Coaches mit Team C-Pro zur Verfügung.' ?></p>
+<?php else: ?>
+  <?php if ($this->message): ?><p class="cp-notice cp-success" role="status"><?= $escape($this->message) ?></p><?php endif; ?>
+  <?php if ($this->error): ?><p class="cp-notice cp-error" role="alert"><?= $escape($this->error) ?></p><?php endif; ?>
+  <?php if (!$this->error && !$this->entries): ?><p class="cp-notice">Aktuell sind keine Anfragen in dieser Ansicht vorhanden.</p><?php endif; ?>
+  <?php if ($this->reviewMode): ?>
+    <h2>Interessen prüfen und Anfragen vergeben</h2>
+    <p class="cp-hint">Passenden Coach auswählen und freigeben. Der Mailversand erfolgt erst anschließend über den eingerichteten HubSpot-Workflow.</p>
+    <div class="cp-table-wrap"><table class="cp-table">
+      <thead><tr><th scope="col">Anfrage</th><th scope="col">Förderung</th><th scope="col">Kurzbeschreibung</th><th scope="col">Interesse gemeldet von</th><th scope="col">Vergabe</th></tr></thead>
+      <tbody>
+      <?php foreach ($this->entries as $id => $entry): ?>
+        <?php $p = $entry['presentation']; $form = $this->formId.'_assign_'.$id; $approved = ($entry['pool_status'] ?? '') === 'freigegeben'; $eligible = false; ?>
+        <tr>
+          <td><strong>Anfrage <?= $escape(($entry['pool_nummer'] ?? '') ?: 'ohne Nummer') ?></strong><br><span class="cp-meta"><?= $escape($entry['city'] ?? '') ?></span></td>
+          <td><span class="cp-badge cp-<?= $escape($p['badge']['class']) ?>"><?= $escape($p['badge']['text']) ?></span></td>
+          <td class="cp-review-description"><?= nl2br($escape($entry['pool_kurzbeschreibung'] ?? '')) ?></td>
+          <td>
+            <?php foreach ($entry['coaches'] as $coach): ?>
+              <?php $eligible = $eligible || $coach['eligible']; ?>
+              <label class="cp-choice"><input type="radio" name="coach_email" value="<?= $escape($coach['email']) ?>" form="<?= $escape($form) ?>" required <?= $approved || !$coach['eligible'] ? 'disabled' : '' ?>>
+                <span><?= $escape($coach['name']) ?><small><?= $escape($coach['email']) ?><?= !$coach['eligible'] ? ' · aktuell nicht C-Pro zugeordnet' : '' ?></small></span>
+              </label>
+            <?php endforeach; ?>
+            <?php if (!$entry['coaches']): ?><span class="cp-meta">Noch kein Interesse</span><?php endif; ?>
+          </td>
+          <td>
+            <?php if ($approved): ?>
+              <span class="cp-reported">Freigegeben für <?= $escape($entry['pool_freigegeben_fuer'] ?? '') ?></span>
+            <?php elseif ($eligible && ($entry['pool_status'] ?? '') === 'interesse_eingegangen'): ?>
+              <form id="<?= $escape($form) ?>" method="post">
+                <input type="hidden" name="FORM_SUBMIT" value="<?= $escape($this->formId) ?>">
+                <input type="hidden" name="REQUEST_TOKEN" value="<?= $escape($this->token) ?>">
+                <input type="hidden" name="contact" value="<?= $escape($id) ?>">
+                <button type="submit" class="cp-button">Ausgewählten Coach freigeben</button>
+              </form>
+            <?php else: ?><span class="cp-meta">Keine Freigabe möglich</span><?php endif; ?>
+          </td>
+        </tr>
+      <?php endforeach; ?>
+      </tbody>
+    </table></div>
+  <?php else: ?>
+    <p class="cp-hint">Offene Coaching-Anfragen, sortiert nach Gutscheingültigkeit. Interesse wird vom Team geprüft.</p>
+    <div class="cp-grid">
+    <?php foreach ($this->entries as $id => $entry): ?>
+      <?php $p = $entry['presentation']; ?>
+      <article class="cp-card">
+        <header><div><h3>Anfrage <?= $escape(($entry['pool_nummer'] ?? '') ?: 'ohne Nummer') ?></h3>
+          <?php if ($p['received']): ?><span class="cp-meta">eingegangen <?= $escape($p['received']) ?></span><?php endif; ?>
+        </div><span class="cp-badge cp-<?= $escape($p['badge']['class']) ?>"><?= $escape($p['badge']['text']) ?></span></header>
+        <!-- Ausschließlich die redaktionell fertige Kurzbeschreibung, kein Formular-Freitext. -->
+        <?php if (!empty($entry['pool_kurzbeschreibung'])): ?><p class="cp-short"><?= nl2br($escape($entry['pool_kurzbeschreibung'])) ?></p><?php endif; ?>
+        <div class="cp-facts">
+          <span>📍 <b><?= $escape(($entry['city'] ?? '') ?: 'Ort offen') ?></b> · <?= $escape(($entry['coachingformat'] ?? '') ?: 'Format offen') ?></span>
+          <span>🕐 Start: <b><?= $escape(($entry['zeitraum_fur_start'] ?? '') ?: 'Noch offen') ?></b></span>
+          <?php if (!empty($entry['bevorzugter_kontaktweg'])): ?><span>Kontakt per <b><?= $escape($entry['bevorzugter_kontaktweg']) ?></b></span><?php endif; ?>
+          <?php if ($p['expiry']): ?><span>Gutschein gültig bis <b><?= $escape($p['expiry']) ?></b></span><?php endif; ?>
+        </div>
+        <div class="cp-chips">
+          <?php foreach ($p['chips'] as $category => $chips): foreach ($chips as $chip): ?>
+            <span class="cp-chip cp-chip-<?= $escape($category) ?>"><?= $escape($chip) ?></span>
+          <?php endforeach; endforeach; ?>
+        </div>
+        <footer>
+          <details class="cp-details"><summary>Alle Angaben</summary>
+            <?php if (!empty($entry['pool_kurzbeschreibung'])): ?><p><?= nl2br($escape($entry['pool_kurzbeschreibung'])) ?></p><?php endif; ?>
+            <dl><?php foreach ($labels as $property => $label): ?>
+              <?php if (isset($entry[$property]) && $entry[$property] !== ''): ?>
+                <dt><?= $escape($label) ?></dt><dd><?= $escape($property === 'gutscheingultigkeit' ? $p['expiry'] : $entry[$property]) ?></dd>
+              <?php endif; ?>
+            <?php endforeach; ?></dl>
+          </details>
+          <?php if (($this->interests[$id] ?? '') === 'received'): ?>
+            <p class="cp-reported" role="status">Interesse gemeldet, wird geprüft.</p>
+          <?php elseif (isset($this->interests[$id])): ?>
+            <p class="cp-notice">Übermittlung wird geprüft. Bitte bei Rückfragen das Team kontaktieren.</p>
+          <?php else: ?>
+            <form method="post">
+              <input type="hidden" name="FORM_SUBMIT" value="<?= $escape($this->formId) ?>">
+              <input type="hidden" name="REQUEST_TOKEN" value="<?= $escape($this->token) ?>">
+              <input type="hidden" name="contact" value="<?= $escape($id) ?>">
+              <button type="submit" class="cp-button" aria-label="Interesse an Anfrage <?= $escape(($entry['pool_nummer'] ?? '') ?: 'ohne Nummer') ?> melden">Interesse</button>
+            </form>
+          <?php endif; ?>
+        </footer>
+      </article>
+    <?php endforeach; ?>
+    </div>
+  <?php endif; ?>
+<?php endif; ?>
+</div>
+<?php $this->endblock(); ?>

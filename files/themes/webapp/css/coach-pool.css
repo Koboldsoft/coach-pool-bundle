@@ -1,0 +1,122 @@
+.coach-pool-grid {
+    margin-top: 1rem;
+}
+
+.coach-pool-grid > .column {
+    display: flex;
+    min-width: 0;
+}
+
+.coach-pool-request.card {
+    width: 100%;
+    border: 1px solid #e8edf2;
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(30, 50, 70, 0.06);
+    overflow-wrap: anywhere;
+}
+
+.coach-pool-request .card-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1.5rem;
+    gap: 1.25rem;
+}
+
+.coach-pool-request .title,
+.coach-pool-request .tags,
+.coach-pool-request .notification {
+    margin: 0;
+}
+
+.coach-pool-request .tags {
+    gap: 0.5rem;
+}
+
+.coach-pool-request .tag {
+    height: auto;
+    min-height: 2em;
+    margin: 0;
+    white-space: normal;
+}
+
+.coach-pool-description,
+.coach-pool-details dd {
+    line-height: 1.6;
+}
+
+.coach-pool-details summary {
+    cursor: pointer;
+    padding: 0.5rem 0;
+}
+
+.coach-pool-details summary:focus-visible,
+.coach-pool-action .button:focus-visible {
+    outline: 3px solid #3273dc;
+    outline-offset: 4px;
+}
+
+.coach-pool-details dl {
+    margin-top: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e8edf2;
+}
+
+.coach-pool-details dt:not(:first-child) {
+    margin-top: 0.75rem;
+}
+
+.coach-pool-details dd {
+    margin-left: 0;
+}
+
+.coach-pool-action,
+.coach-pool-request .card-content > .notification {
+    margin-top: auto;
+}
+
+/* Coach-Pool nach construct/coach-pool-ansicht-vorschlag.html.
+   Alle Regeln bleiben im Modul, damit Navigation und andere Seiten unverändert bleiben. */
+.coach-pool-view { --cp-teal:#00a88d; --cp-text:#2c2f36; --cp-grey:#6b7280; color:var(--cp-text); padding:16px 0 32px; }
+.coach-pool-view .cp-hint { color:var(--cp-grey); margin:0 0 18px; font-size:15px; }
+.coach-pool-view .cp-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr)); gap:18px; }
+.coach-pool-view .cp-card { background:#fff; border:1px solid #e9ecef; border-radius:10px; padding:20px; display:flex; flex-direction:column; gap:14px; min-width:0; overflow-wrap:anywhere; box-shadow:0 3px 14px rgba(30,50,70,.04); }
+.coach-pool-view .cp-card header { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap; }
+.coach-pool-view .cp-card h3 { margin:0; font-size:20px; }
+.coach-pool-view .cp-meta { font-size:12.5px; color:var(--cp-grey); }
+.coach-pool-view .cp-badge { display:inline-block; font-size:12.5px; font-weight:700; border-radius:999px; padding:4px 10px; border:1.5px solid #cfd3d8; background:#f3f4f6; }
+.coach-pool-view .cp-badge.cp-ok { background:#e6f8e8; border-color:#3dcd49; }
+.coach-pool-view .cp-badge.cp-promise { background:#fff7c2; border-color:#f2c200; }
+.coach-pool-view .cp-badge.cp-drv { background:#e8f1ff; border-color:#6b9cf2; }
+.coach-pool-view .cp-badge.cp-urgent { background:#ffe3df; border-color:#fa6a57; }
+.coach-pool-view .cp-short { margin:0; font-size:15px; line-height:1.55; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
+.coach-pool-view .cp-facts { display:flex; flex-direction:column; gap:5px; font-size:14px; color:var(--cp-grey); }
+.coach-pool-view .cp-facts b { color:var(--cp-text); }
+.coach-pool-view .cp-chips { display:flex; flex-wrap:wrap; gap:6px; }
+.coach-pool-view .cp-chip { font-size:12px; border-radius:4px; padding:3px 8px; background:#f1f3f5; }
+.coach-pool-view .cp-chip-type { background:#e6faf6; color:#0c7462; }
+.coach-pool-view .cp-chip-target { background:#eef2ff; color:#3b4cb8; }
+.coach-pool-view .cp-chip-industry { background:#fff4e6; color:#925000; }
+.coach-pool-view .cp-card footer { display:flex; flex-direction:column; gap:10px; margin-top:auto; }
+.coach-pool-view .cp-details summary { color:#3b4cb8; font-weight:700; cursor:pointer; }
+.coach-pool-view .cp-details dl { margin:12px 0; }
+.coach-pool-view .cp-details dt { color:var(--cp-grey); font-size:12px; margin-top:8px; }
+.coach-pool-view .cp-details dd { margin:0; }
+.coach-pool-view .cp-details p { white-space:normal; line-height:1.6; }
+.coach-pool-view .cp-button { background:var(--cp-teal); color:#fff; border:0; border-radius:4px; min-height:42px; padding:10px 18px; font:inherit; font-size:15px; cursor:pointer; }
+.coach-pool-view .cp-card .cp-button { width:100%; }
+.coach-pool-view .cp-button:hover { background:#008b75; }
+.coach-pool-view .cp-button:focus-visible,.coach-pool-view summary:focus-visible,.coach-pool-view input:focus-visible { outline:3px solid #3b4cb8; outline-offset:3px; }
+.coach-pool-view .cp-reported { display:block; margin:0; background:#e9f9f1; color:#1e7a4f; border-radius:4px; padding:11px 14px; font-size:14.5px; }
+.coach-pool-view .cp-notice { padding:12px 14px; border-radius:6px; background:#eef2ff; margin:0 0 16px; }
+.coach-pool-view .cp-error { background:#ffe3df; color:#8b2415; }
+.coach-pool-view .cp-success { background:#e9f9f1; color:#1e7a4f; }
+.coach-pool-view .cp-table-wrap { overflow-x:auto; }
+.coach-pool-view .cp-table { width:100%; border-collapse:collapse; background:#fff; border:1px solid #e9ecef; font-size:14px; }
+.coach-pool-view .cp-table th { text-align:left; font-size:12px; color:var(--cp-grey); background:#f8f9fa; padding:10px 12px; }
+.coach-pool-view .cp-table td { padding:12px; border-top:1px solid #e9ecef; vertical-align:top; overflow-wrap:anywhere; }
+.coach-pool-view .cp-review-description { min-width:220px; max-width:380px; line-height:1.5; }
+.coach-pool-view .cp-choice { display:flex; align-items:flex-start; gap:7px; margin-bottom:10px; cursor:pointer; }
+.coach-pool-view .cp-choice input { margin-top:4px; }
+.coach-pool-view .cp-choice small { display:block; color:var(--cp-grey); }
+@media(max-width:600px) { .coach-pool-view .cp-card { padding:16px; } .coach-pool-view .cp-table { min-width:760px; } }

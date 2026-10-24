@@ -1,0 +1,20 @@
+{
+    "name": "koboldsoft/coach-pool-bundle",
+    "description": "Coach-Pool mit HubSpot-Kontaktanbindung für Contao 4.9",
+    "type": "contao-bundle",
+    "version": "1.0.0",
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "contao/core-bundle": "^4.9",
+        "symfony/http-client": "^4.4 || ^5.0",
+        "doctrine/dbal": "^2.11"
+    },
+    "autoload": {
+        "psr-4": {
+            "Koboldsoft\\CoachPoolBundle\\": "src/"
+        }
+    },
+    "extra": {
+        "contao-manager-plugin": "Koboldsoft\\CoachPoolBundle\\ContaoManager\\Plugin"
+    }
+}
